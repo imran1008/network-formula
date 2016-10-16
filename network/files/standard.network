@@ -1,0 +1,36 @@
+#
+# This file is managed by salt
+#
+
+[Match]
+Name={{ iface_name }}
+
+{%- if mtu != 'dhcp' %}
+[Link]
+MTUBytes={{ mtu }}
+{%- endif %}
+
+[Network]
+DHCP={{ dhcp }}
+{%- if dns is defined %}
+DNS={{ dns }}
+{%- endif %}
+
+{%- if address is defined %}
+[Address]
+Address={{ address }}
+{%- endif %}
+
+{%- if gateway is defined %}
+[Route]
+Gateway={{ gateway }}
+{%- endif %}
+
+{%- if dhcp != 'no' or send_hostname == 'yes' %}
+[DHCP]
+SendHostname={{ send_hostname }}
+{%- if dhcp != 'no' and mtu == 'dhcp' %}
+UseMTU=yes
+{%- endif %}
+{%- endif %}
+

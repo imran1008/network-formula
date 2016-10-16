@@ -1,0 +1,8 @@
+#
+# This file is managed by salt
+#
+
+[NetDev]
+Name={{ bridge_name }}
+Kind=bridge
+

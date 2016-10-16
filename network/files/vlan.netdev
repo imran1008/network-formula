@@ -1,0 +1,11 @@
+#
+# This file is managed by salt
+#
+
+[NetDev]
+Name={{ vlan_name }}
+Kind=vlan
+
+[VLAN]
+Id={{ vlan_id }}
+

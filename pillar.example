@@ -1,0 +1,134 @@
+# Example router configuration
+netconf:
+  devices:
+    # em1 is the WAN-side interface.
+    em1:
+      dns: '127.0.0.1'
+      address: '11.22.33.44/24'
+      gateway: '11.22.33.1'
+      mtu: 1500
+
+    # em2 is the LAN-side interface
+    em2:
+      # Enable jumbo frames by default
+      mtu: 9000
+      vlans:
+        vlan_1500:
+          id: 6
+          address: '192.168.2.1/24'
+
+          # Disable jumbo frames for networks that do not support jumbo frames
+          mtu: 1500
+
+        vlan_9000:
+          id: 7
+          address: '192.168.3.1/24'
+
+# Example storage server configuration with VLANs
+# In this setup, multiple SAN networks are trunked within a single physical
+# interface using VLANs
+netconf:
+  # Enable jumbo frames
+  mtu: 9000
+
+  # Enable DHCP over IPv4 network
+  dhcp: ipv4
+
+  # By default, we don't want the hostname to be sent to the DHCP server.  We
+  # only want to send it through the management interface.  This will ensure
+  # DNS entries never point to an IP address of SAN interfaces.
+  send_hostname: 'no'
+
+  devices:
+    lan:
+      send_hostname: 'yes'
+
+      # Use the MTU setting from the DHCP server, overriding the default
+      mtu: dhcp
+
+    p2p1:
+      vlans:
+        vlan_san00:
+          id: 8
+          mtu: dhcp
+        vlan_san01:
+          id: 9
+          mtu: dhcp
+
+    p2p2:
+      vlans:
+        vlan_san02:
+          id: 10
+          mtu: dhcp
+        vlan_san03:
+          id: 11
+          mtu: dhcp
+
+# Example storage server configuration without VLANs
+# In this setup, each SAN network has a dedicated physical interface so no
+# VLANs are necessary
+netconf:
+  # Enable jumbo frames
+  mtu: 9000
+
+  # Enable DHCP over IPv4 network
+  dhcp: ipv4
+
+  # By default, we don't want the hostname to be sent to the DHCP server.  We
+  # only want to send it through the management interface.  This will ensure
+  # DNS entries never point to an IP address of SAN interfaces.
+  send_hostname: 'no'
+
+  devices:
+    lan:
+      send_hostname: 'yes'
+
+      # Use the MTU setting from the DHCP server, overriding the default
+      mtu: dhcp
+
+    p2p1:
+    p2p2:
+    p2p3:
+    p2p4:
+
+# Example application server configuration
+netconf:
+  # Enable jumbo frames
+  mtu: 9000
+
+  # Enable DHCP over IPv4 network
+  dhcp: ipv4
+
+  devices:
+    lan:
+      vlans:
+        vlan_1500:
+          id: 6
+          mtu: dhcp
+          bridge: br_1500
+
+        vlan_9000:
+          id: 7
+          mtu: dhcp
+          bridge: br_9000
+
+    p6p1:
+      send_hostname: 'no'
+      vlans:
+        vlan_san00:
+          id: 8
+          mtu: dhcp
+        vlan_san01:
+          id: 9
+          mtu: dhcp
+
+    p6p2:
+      send_hostname: 'no'
+      vlans:
+        vlan_san02:
+          id: 10
+          mtu: dhcp
+        vlan_san03:
+          id: 11
+          mtu: dhcp
+

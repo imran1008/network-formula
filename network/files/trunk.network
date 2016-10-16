@@ -1,0 +1,15 @@
+#
+# This file is managed by salt
+#
+
+[Match]
+Name={{ iface_name }}
+
+[Link]
+MTUBytes={{ mtu }}
+
+[Network]
+{%- for vlan_name in vlans %}
+VLAN={{ vlan_name  }}
+{%- endfor %}
+
