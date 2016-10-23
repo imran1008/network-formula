@@ -1,16 +1,25 @@
-
 {% set global = pillar.get('netconf') %}
 
 {% set files = [] %}
 {% set global_mtu = global.mtu is defined and global.mtu or '1500' %}
 {% set global_dhcp = global.dhcp is defined and global.dhcp or 'no' %}
 {% set global_send_hostname = global.send_hostname is defined and global.send_hostname or 'yes' %}
+{% set global_use_dns = global.use_dns is defined and global.use_dns or 'yes' %}
+{% set global_use_ntp = global.use_ntp is defined and global.use_ntp or 'yes' %}
+{% set global_use_routes = global.use_routes is defined and global.use_routes or 'yes' %}
+{% set global_use_domains = global.use_domains is defined and global.use_domains or 'no' %}
+{% set global_hostname = global.hostname is defined and global.hostname or '' %}
 
 {% for iface_name, device in global.devices.items() %}
 
 {% set dev_mtu = device.mtu is defined and device.mtu or global_mtu %}
 {% set dev_dhcp = device.dhcp is defined and device.dhcp or global_dhcp %}
 {% set dev_send_hostname = device.send_hostname is defined and device.send_hostname or global_send_hostname %}
+{% set dev_use_dns = device.use_dns is defined and device.use_dns or global_use_dns %}
+{% set dev_use_ntp = device.use_ntp is defined and device.use_ntp or global_use_ntp %}
+{% set dev_use_routes = device.use_routes is defined and device.use_routes or global_use_routes %}
+{% set dev_use_domains = device.use_domains is defined and device.use_domains or global_use_domains %}
+{% set dev_hostname = device.hostname is defined and device.hostname or global_hostname %}
 
 {% if device.vlans is defined %}
 
@@ -40,6 +49,11 @@
 {% set vlan_mtu = vlan.mtu is defined and vlan.mtu or dev_mtu %}
 {% set vlan_dhcp = vlan.dhcp is defined and vlan.dhcp or dev_dhcp %}
 {% set vlan_send_hostname = vlan.send_hostname is defined and vlan.send_hostname or dev_send_hostname %}
+{% set vlan_use_dns = vlan.use_dns is defined and vlan.use_dns or dev_use_dns %}
+{% set vlan_use_ntp = vlan.use_ntp is defined and vlan.use_ntp or dev_use_ntp %}
+{% set vlan_use_routes = vlan.use_routes is defined and vlan.use_routes or dev_use_routes %}
+{% set vlan_use_domains = vlan.use_domains is defined and vlan.use_domains or dev_use_domains %}
+{% set vlan_hostname = vlan.hostname is defined and vlan.hostname or dev_hostname %}
 
 # Virtual network device for a vlan
 {% do files.append("/etc/systemd/network/" + vlan_name + ".netdev") %}
@@ -105,7 +119,11 @@
         gateway: "{{ vlan.gateway }}"
         {% endif %}
         send_hostname: "{{ vlan_send_hostname }}"
-
+        use_dns: "{{ vlan_use_dns }}"
+        use_ntp: "{{ vlan_use_ntp }}"
+        use_routes: "{{ vlan_use_routes }}"
+        use_domains: "{{ vlan_use_domains }}"
+        hostname: "{{ vlan_hostname }}"
 {% else %}
 
 # Network config for vlan device as a non-bridge device
@@ -131,7 +149,11 @@
         gateway: "{{ vlan.gateway }}"
         {% endif %}
         send_hostname: "{{ vlan_send_hostname }}"
-
+        use_dns: "{{ vlan_use_dns }}"
+        use_ntp: "{{ vlan_use_ntp }}"
+        use_routes: "{{ vlan_use_routes }}"
+        use_domains: "{{ vlan_use_domains }}"
+        hostname: "{{ vlan_hostname }}"
 {% endif %}
 {% endfor %}
 
@@ -159,7 +181,11 @@
         gateway: "{{ device.gateway }}"
         {% endif %}
         send_hostname: "{{ dev_send_hostname }}"
-
+        use_dns: "{{ dev_use_dns }}"
+        use_ntp: "{{ dev_use_ntp }}"
+        use_routes: "{{ dev_use_routes }}"
+        use_domains: "{{ dev_use_domains }}"
+        hostname: "{{ dev_hostname }}"
 {% endif %}
 {% endfor %}
 
@@ -170,4 +196,5 @@ systemd-networkd:
 {% for file in files %}
       - file: {{ file }}
 {% endfor %}
+
 

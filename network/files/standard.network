@@ -6,6 +6,7 @@
 Name={{ iface_name }}
 
 {%- if mtu != 'dhcp' %}
+
 [Link]
 MTUBytes={{ mtu }}
 {%- endif %}
@@ -17,20 +18,47 @@ DNS={{ dns }}
 {%- endif %}
 
 {%- if address is defined %}
+
 [Address]
 Address={{ address }}
 {%- endif %}
 
 {%- if gateway is defined %}
+
 [Route]
 Gateway={{ gateway }}
 {%- endif %}
 
-{%- if dhcp != 'no' or send_hostname == 'yes' %}
+{%- if dhcp != 'no' %}
+
 [DHCP]
-SendHostname={{ send_hostname }}
-{%- if dhcp != 'no' and mtu == 'dhcp' %}
+{%- if send_hostname == 'no' %}
+SendHostname=no
+{%- endif %}
+
+{%- if mtu == 'dhcp' %}
 UseMTU=yes
 {%- endif %}
+
+{%- if use_dns == 'no' %}
+UseDNS=no
 {%- endif %}
+
+{%- if use_ntp == 'no' %}
+UseNTP=no
+{%- endif %}
+
+{%- if use_routes == 'no' %}
+UseRoutes=no
+{%- endif %}
+
+{%- if use_domains != 'no' %}
+UseDomains={{ use_domains }}
+{%- endif %}
+
+{%- if hostname != '' %}
+Hostname={{ hostname }}
+{%- endif %}
+{%- endif %}
+
 
