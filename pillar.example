@@ -132,3 +132,39 @@ netconf:
           id: 11
           mtu: dhcp
 
+# Example salt master configuration
+netconf:
+  dhcp: ipv4
+  mtu: dhcp
+
+  # We want to selectively accept the DNS settings from the management port
+  # only, so se disable the option as a default.
+  use_dns: 'no'
+
+  # Same thing for NTP settings. We only want to accept NTP settings from
+  # the management port.
+  use_ntp: 'no'
+
+  # Same for routing settings.
+  use_routes: 'no'
+
+  devices:
+    ens6: # non-jumbo frame network
+      mtu: 1500
+
+    ens7: # jumbo frame network
+
+    ens8: # prod network
+      # The salt minions run on the prod/dev networks. We advertise the
+      # hostname 'salt' so these minions can connect back to this host.
+      hostname: salt
+
+    ens9: # dev network
+      hostname: salt
+
+    ens10: # management port
+      use_dns: 'yes'
+      use_ntp: 'yes'
+      use_routes: 'yes'
+      use_domains: 'yes'
+
