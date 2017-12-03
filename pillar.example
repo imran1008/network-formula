@@ -24,6 +24,64 @@ netconf:
           id: 7
           address: '192.168.3.1/24'
 
+# Example storage server configuration
+# In this setup, each SAN network has a dedicated physical interface so no
+# VLANs are necessary
+netconf:
+  # Enable jumbo frames
+  mtu: 9000
+
+  # Enable DHCP over IPv4 network
+  dhcp: ipv4
+
+  # By default, we don't want the hostname to be sent to the DHCP server.  We
+  # only want to send it through the management interface.  This will ensure
+  # DNS entries never point to an IP address of SAN interfaces.
+  send_hostname: 'no'
+
+  devices:
+    lan:
+      send_hostname: 'yes'
+
+      # Use the MTU setting from the DHCP server, overriding the default
+      mtu: dhcp
+
+    p2p1:
+    p2p2:
+    p2p3:
+    p2p4:
+
+# Example storage server configuration with LAG
+# In this setup, each SAN network has a dedicated physical interface so no
+# VLANs are necessary
+netconf:
+  # Enable jumbo frames
+  mtu: 9000
+
+  # Enable DHCP over IPv4 network
+  dhcp: ipv4
+
+  # By default, we don't want the hostname to be sent to the DHCP server.  We
+  # only want to send it through the management interface.  This will ensure
+  # DNS entries never point to an IP address of SAN interfaces.
+  send_hostname: 'no'
+
+  devices:
+    lan:
+      send_hostname: 'yes'
+
+      # Use the MTU setting from the DHCP server, overriding the default
+      mtu: dhcp
+      bond_mode: '802.3ad'
+      slaves:
+        - em1
+        - em2
+
+    p2p1:
+    p2p2:
+    p2p3:
+    p2p4:
+
 # Example storage server configuration with VLANs
 # In this setup, multiple SAN networks are trunked within a single physical
 # interface using VLANs
@@ -63,33 +121,6 @@ netconf:
         vlan_san03:
           id: 11
           mtu: dhcp
-
-# Example storage server configuration without VLANs
-# In this setup, each SAN network has a dedicated physical interface so no
-# VLANs are necessary
-netconf:
-  # Enable jumbo frames
-  mtu: 9000
-
-  # Enable DHCP over IPv4 network
-  dhcp: ipv4
-
-  # By default, we don't want the hostname to be sent to the DHCP server.  We
-  # only want to send it through the management interface.  This will ensure
-  # DNS entries never point to an IP address of SAN interfaces.
-  send_hostname: 'no'
-
-  devices:
-    lan:
-      send_hostname: 'yes'
-
-      # Use the MTU setting from the DHCP server, overriding the default
-      mtu: dhcp
-
-    p2p1:
-    p2p2:
-    p2p3:
-    p2p4:
 
 # Example application server configuration
 netconf:

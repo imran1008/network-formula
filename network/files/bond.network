@@ -1,0 +1,14 @@
+#
+# This file is managed by salt
+#
+
+[Match]
+Name={{ iface_name }}
+
+[Link]
+MTUBytes={{ mtu }}
+
+[Network]
+Bond={{ bond_name  }}
+
+

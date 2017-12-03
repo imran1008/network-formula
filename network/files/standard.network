@@ -5,9 +5,8 @@
 [Match]
 Name={{ iface_name }}
 
-{%- if mtu != 'dhcp' %}
-
 [Link]
+{%- if mtu != 'dhcp' %}
 MTUBytes={{ mtu }}
 {%- endif %}
 
@@ -30,7 +29,6 @@ Gateway={{ gateway }}
 {%- endif %}
 
 {%- if dhcp != 'no' %}
-
 [DHCP]
 {%- if send_hostname == 'no' %}
 SendHostname=no

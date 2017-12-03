@@ -124,7 +124,7 @@
         use_routes: "{{ vlan_use_routes }}"
         use_domains: "{{ vlan_use_domains }}"
         hostname: "{{ vlan_hostname }}"
-{% else %}
+{% else %}  # if vlan.bridge is not defined
 
 # Network config for vlan device as a non-bridge device
 {% do files.append("/etc/systemd/network/" + vlan_name + ".network") %}
@@ -158,6 +158,39 @@
 {% endfor %}
 
 {% else %}  # if device.vlans is not defined
+{% if device.slaves is defined %}
+
+# Virtual network device for a bond master
+{% do files.append("/etc/systemd/network/" + iface_name + ".netdev") %}
+/etc/systemd/network/{{ iface_name }}.netdev:
+  file.managed:
+    - source: salt://network/files/bond.netdev
+    - user: root
+    - group: root
+    - mode: 644
+    - template: jinja
+    - context:
+        bond_name: "{{ iface_name }}"
+        bond_mode: "{{ device.bond_mode }}"
+
+{% for slave_name in device.slaves %}
+
+# Network config for slave device
+{% do files.append("/etc/systemd/network/" + slave_name + ".network") %}
+/etc/systemd/network/{{ slave_name }}.network:
+   file.managed:
+    - source: salt://network/files/bond.network
+    - user: root
+    - group: root
+    - mode: 644
+    - template: jinja
+    - context:
+        iface_name: "{{ slave_name }}"
+        mtu: {{ dev_mtu }}
+        bond_name: "{{ iface_name }}"
+
+{% endfor %}
+{% endif %} # if device.slaves is not defined
 
 {% do files.append("/etc/systemd/network/" + iface_name + ".network") %}
 /etc/systemd/network/{{ iface_name }}.network:

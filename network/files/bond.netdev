@@ -1,0 +1,11 @@
+#
+# This file is managed by salt
+#
+
+[NetDev]
+Name={{ bond_name }}
+Kind=bond
+
+[Bond]
+Mode={{ bond_mode }}
+
